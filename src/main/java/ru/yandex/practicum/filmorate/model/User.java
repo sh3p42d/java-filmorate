@@ -20,4 +20,11 @@ public class User {
 
     @Past(message = "День рождения пользователя не может быть в будущем")
     private final LocalDate birthday;
+
+    public User(String email, String login, LocalDate birthday) {
+        this.email = email;
+        this.login = login;
+        this.name = login;
+        this.birthday = birthday;
+    }
 }

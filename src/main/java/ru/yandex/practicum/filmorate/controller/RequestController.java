@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.NotPresentException;
 
 import javax.validation.Valid;
+import javax.validation.ValidationException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,24 +25,30 @@ public abstract class RequestController <T> {
 
     @PostMapping
     public T create(@Valid @RequestBody T typeOfInfo) {
-        addId(typeOfInfo, id);
-        mapOfInfo.put(id, typeOfInfo);
-        log.debug("Добавлен {}: {}", typeOfInfo.getClass(), typeOfInfo);
-        id++;
-
+        try {
+            addId(typeOfInfo, id);
+            mapOfInfo.put(id, typeOfInfo);
+            log.debug("Добавлен {}: {}", typeOfInfo.getClass(), typeOfInfo);
+            id++;
+        } catch (ValidationException e) {
+            log.error("Ошибка в теле запроса");
+        }
         return typeOfInfo;
     }
 
     @PutMapping
     public T update(@Valid @RequestBody T typeOfInfo) {
-        if (checkIsExist(typeOfInfo)) {
-            mapOfInfo.put(extractId(typeOfInfo), typeOfInfo);
-            log.debug("Обновлен {}: {}", typeOfInfo.getClass(), typeOfInfo);
-        } else {
-            log.debug("{} для обновления не найден", typeOfInfo);
-            throw new NotPresentException(HttpStatus.NOT_FOUND, "Нет такого " + typeOfInfo);
+        try {
+            if (checkIsExist(typeOfInfo)) {
+                mapOfInfo.put(extractId(typeOfInfo), typeOfInfo);
+                log.debug("Обновлен {}: {}", typeOfInfo.getClass(), typeOfInfo);
+            } else {
+                log.debug("{} для обновления не найден", typeOfInfo);
+                throw new NotPresentException(HttpStatus.NOT_FOUND, "Нет такого " + typeOfInfo);
+            }
+        } catch (ValidationException e) {
+            log.error("Ошибка в теле запроса");
         }
-
         return typeOfInfo;
     }
 

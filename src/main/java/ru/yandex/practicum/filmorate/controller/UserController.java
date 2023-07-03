@@ -11,9 +11,6 @@ public class UserController extends RequestController <User> {
 
     @Override
     protected boolean checkIsExist(User user) {
-        if (user.getName() == null) {
-            user.setName(user.getLogin());
-        }
         return mapOfInfo.containsKey(user.getId());
     }
 
@@ -24,9 +21,6 @@ public class UserController extends RequestController <User> {
 
     @Override
     protected void addId(User user, int id) {
-        if (user.getName() == null) {
-            user.setName(user.getLogin());
-        }
         user.setId(id);
     }
 }
