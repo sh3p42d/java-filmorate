@@ -36,7 +36,9 @@ public abstract class ControllerTest<T> {
         return null;
     }
 
-    protected void setValueForTestId(int id) {}
+    protected void setValueForTestId(int id) {
+
+    }
 
     protected String valueForTestToString(T valueForTest) {
         return null;
@@ -60,12 +62,12 @@ public abstract class ControllerTest<T> {
                     .content(objectMapper.writeValueAsString(valueForTest)));
 
         setValueForTestId(1);
-        
+
         MvcResult result = mvc.perform(MockMvcRequestBuilders
                         .get(url)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
-        
+
         assertEquals(200, result.getResponse().getStatus());
         assertEquals("[" + valueForTestToString(valueForTest) + "]", result.getResponse().getContentAsString());
     }
