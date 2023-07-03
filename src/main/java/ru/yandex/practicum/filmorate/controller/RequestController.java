@@ -14,7 +14,7 @@ import java.util.Map;
 
 @Slf4j
 @RestController
-public abstract class RequestController <T> {
+public abstract class RequestController<T> {
     protected int id = 1;
     protected final Map<Integer, T> mapOfInfo = new HashMap<>();
 
@@ -52,7 +52,11 @@ public abstract class RequestController <T> {
         return typeOfInfo;
     }
 
-    protected boolean checkIsExist(T typeOfInfo) { return false; }
-    protected int extractId(T typeOfInfo) {return 0;}
+    protected boolean checkIsExist(T typeOfInfo) {
+        return false;
+    }
+    protected int extractId(T typeOfInfo) {
+        return 0;
+    }
     protected void addId(T typeOfInfo, int id) {}
 }
