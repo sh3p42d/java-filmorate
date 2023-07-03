@@ -55,8 +55,12 @@ public abstract class RequestController<T> {
     protected boolean checkIsExist(T typeOfInfo) {
         return false;
     }
+
     protected int extractId(T typeOfInfo) {
         return 0;
     }
-    protected void addId(T typeOfInfo, int id) {}
+
+    protected void addId(T typeOfInfo, int id) {
+
+    }
 }
