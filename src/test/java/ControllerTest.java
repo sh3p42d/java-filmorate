@@ -32,11 +32,15 @@ public abstract class ControllerTest<T> {
     @Autowired
     private ObjectMapper objectMapper;
 
-    protected T getValidValueForTest() { return null; }
+    protected T getValidValueForTest() {
+        return null;
+    }
 
     protected void setValueForTestId(int id) {}
 
-    protected String valueForTestToString(T valueForTest) { return null; }
+    protected String valueForTestToString(T valueForTest) {
+        return null;
+    }
 
     @Test
     void getEmptyList() throws Exception {
