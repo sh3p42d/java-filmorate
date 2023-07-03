@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequestMapping("/users")
-public class UserController extends RequestController <User> {
+public class UserController extends RequestController<User> {
 
     @Override
     protected boolean checkIsExist(User user) {
