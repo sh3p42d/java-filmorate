@@ -28,7 +28,7 @@ public abstract class RequestController<T> {
         try {
             addId(typeOfInfo, id);
             mapOfInfo.put(id, typeOfInfo);
-            log.debug("Добавлен {}: {}", typeOfInfo.getClass(), typeOfInfo);
+            log.info("Добавлен {}: {}", typeOfInfo.getClass(), typeOfInfo);
             id++;
         } catch (ValidationException e) {
             log.error("Ошибка в теле запроса");
@@ -41,9 +41,9 @@ public abstract class RequestController<T> {
         try {
             if (checkIsExist(typeOfInfo)) {
                 mapOfInfo.put(extractId(typeOfInfo), typeOfInfo);
-                log.debug("Обновлен {}: {}", typeOfInfo.getClass(), typeOfInfo);
+                log.info("Обновлен {}: {}", typeOfInfo.getClass(), typeOfInfo);
             } else {
-                log.debug("{} для обновления не найден", typeOfInfo);
+                log.info("{} для обновления не найден", typeOfInfo);
                 throw new NotPresentException(HttpStatus.NOT_FOUND, "Нет такого " + typeOfInfo);
             }
         } catch (ValidationException e) {
