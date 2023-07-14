@@ -1,8 +1,11 @@
 package ru.yandex.practicum.filmorate.model;
 
+import lombok.Builder;
 import lombok.Data;
 import javax.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 public class User {
@@ -20,6 +23,8 @@ public class User {
 
     @Past(message = "День рождения пользователя не может быть в будущем")
     private final LocalDate birthday;
+
+    private Set<Integer> friends = new HashSet<>();
 
     public User(String email, String login, LocalDate birthday) {
         this.email = email;

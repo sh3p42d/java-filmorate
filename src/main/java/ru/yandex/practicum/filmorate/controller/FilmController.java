@@ -1,68 +1,63 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import ru.yandex.practicum.filmorate.exceptions.NotPresentException;
 import ru.yandex.practicum.filmorate.model.Film;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
-import javax.validation.ValidationException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 @Slf4j
 @RestController
 @RequestMapping("/films")
+@RequiredArgsConstructor
 public class FilmController {
-    protected int id = 1;
-    protected final Map<Integer, Film> mapOfInfo = new HashMap<>();
-
-    @GetMapping
-    public List<Film> findAll() {
-        return new ArrayList<>(mapOfInfo.values());
-    }
+    private final FilmService filmService;
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public Film create(@Valid @RequestBody Film film) {
-        try {
-            addId(film, id);
-            mapOfInfo.put(id, film);
-            log.info("Добавлен {}: {}", film.getClass(), film);
-            id++;
-        } catch (ValidationException e) {
-            log.error("Ошибка в теле запроса");
-        }
-        return film;
+        return filmService.addFilm(film);
+    }
+
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public Set<Film> findAll() {
+        return filmService.getAllFilms();
+    }
+
+    @GetMapping(value = "/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Film findOne(@PathVariable int id) {
+        return filmService.getFilm(id);
+    }
+
+    @GetMapping(value = "/popular")
+    @ResponseStatus(HttpStatus.OK)
+    public List<Film> findPopular(@RequestParam(value = "count", defaultValue = "10", required = false)
+                                     Integer count) {
+        return filmService.getRating(count);
     }
 
     @PutMapping
+    @ResponseStatus(HttpStatus.OK)
     public Film update(@Valid @RequestBody Film film) {
-        try {
-            if (checkIsExist(film)) {
-                mapOfInfo.put(extractId(film), film);
-                log.info("Обновлен {}: {}", film.getClass(), film);
-            } else {
-                log.info("{} для обновления не найден", film);
-                throw new NotPresentException(HttpStatus.NOT_FOUND, "Нет такого " + film);
-            }
-        } catch (ValidationException e) {
-            log.error("Ошибка в теле запроса");
-        }
-        return film;
+        return filmService.updateFilm(film);
     }
 
-    protected boolean checkIsExist(Film film) {
-        return mapOfInfo.containsKey(film.getId());
+    @PutMapping(value = "/{filmId}/like/{userId}")
+    @ResponseStatus(HttpStatus.OK)
+    public boolean likeFilm(@PathVariable int filmId, @PathVariable int userId) {
+        return filmService.like(filmId, userId);
     }
 
-    protected int extractId(Film film) {
-        return film.getId();
-    }
-
-    protected void addId(Film film, int id) {
-        film.setId(id);
+    @DeleteMapping(value = "/{filmId}/like/{userId}")
+    @ResponseStatus(HttpStatus.OK)
+    public boolean unlikeFilm(@PathVariable int filmId, @PathVariable int userId) {
+        return filmService.unlike(filmId, userId);
     }
 }

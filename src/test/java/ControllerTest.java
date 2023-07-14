@@ -106,7 +106,7 @@ public abstract class ControllerTest<T> {
                 .post(url).contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(valueForTest))).andReturn();
 
-        assertEquals(200, result.getResponse().getStatus());
+        assertEquals(201, result.getResponse().getStatus());
         setValueForTestId(2);
         assertEquals(valueForTestToString(valueForTest), result.getResponse().getContentAsString());
     }

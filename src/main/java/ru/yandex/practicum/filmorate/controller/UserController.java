@@ -1,68 +1,68 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import ru.yandex.practicum.filmorate.exceptions.NotPresentException;
 import ru.yandex.practicum.filmorate.model.User;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
-import javax.validation.ValidationException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 @Slf4j
 @RestController
 @RequestMapping("/users")
+@RequiredArgsConstructor
 public class UserController {
-    protected int id = 1;
-    protected final Map<Integer, User> mapOfInfo = new HashMap<>();
-
-    @GetMapping
-    public List<User> findAll() {
-        return new ArrayList<>(mapOfInfo.values());
-    }
+    private final UserService userService;
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public User create(@Valid @RequestBody User user) {
-        try {
-            addId(user, id);
-            mapOfInfo.put(id, user);
-            log.info("Добавлен {}: {}", user.getClass(), user);
-            id++;
-        } catch (ValidationException e) {
-            log.error("Ошибка в теле запроса");
-        }
-        return user;
+        return userService.addUser(user);
+    }
+
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public Set<User> findAll() {
+        return userService.getAllUsers();
+    }
+
+    @GetMapping(value = "/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public User findOne(@PathVariable int id) {
+        return userService.getUser(id);
+    }
+
+    @GetMapping(value = "/{id}/friends")
+    @ResponseStatus(HttpStatus.OK)
+    public List<User> findFriends(@Valid @PathVariable int id) {
+        return userService.getFriends(id);
+    }
+
+    @GetMapping(value = "/{id}/friends/common/{otherId}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<User> findCommon(@PathVariable int id, @PathVariable int otherId) {
+        return userService.commonFriends(id, otherId);
     }
 
     @PutMapping
+    @ResponseStatus(HttpStatus.OK)
     public User update(@Valid @RequestBody User user) {
-        try {
-            if (checkIsExist(user)) {
-                mapOfInfo.put(extractId(user), user);
-                log.info("Обновлен {}: {}", user.getClass(), user);
-            } else {
-                log.info("{} для обновления не найден", user);
-                throw new NotPresentException(HttpStatus.NOT_FOUND, "Нет такого " + user);
-            }
-        } catch (ValidationException e) {
-            log.error("Ошибка в теле запроса");
-        }
-        return user;
+        return userService.updateUser(user);
     }
 
-    protected boolean checkIsExist(User user) {
-        return mapOfInfo.containsKey(user.getId());
+    @PutMapping(value = "/{id}/friends/{friendId}")
+    @ResponseStatus(HttpStatus.OK)
+    public boolean addFriend(@Valid @PathVariable int id, @PathVariable int friendId) {
+        return userService.addFriend(id, friendId);
     }
 
-    protected int extractId(User user) {
-        return user.getId();
-    }
-
-    protected void addId(User user, int id) {
-        user.setId(id);
+    @DeleteMapping(value = "/{id}/friends/{friendId}")
+    @ResponseStatus(HttpStatus.OK)
+    public boolean deleteFriend(@Valid @PathVariable int id, @PathVariable int friendId) {
+        return userService.removeFriend(id, friendId);
     }
 }

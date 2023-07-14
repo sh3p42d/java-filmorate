@@ -29,7 +29,8 @@ public class FilmControllerTest extends ControllerTest<Film> {
                 ",\"name\":\"" + film.getName() +
                 "\",\"description\":\"" + film.getDescription() +
                 "\",\"releaseDate\":\"" + film.getReleaseDate() +
-                "\",\"duration\":" + film.getDuration() + "}";
+                "\",\"duration\":" + film.getDuration() +
+                ",\"likes\":" + film.getLikes() + "}";
     }
 
     protected static Stream<Arguments> invalidFields() {

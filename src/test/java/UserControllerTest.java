@@ -29,7 +29,8 @@ public class UserControllerTest extends ControllerTest<User> {
                 ",\"email\":\"" + user.getEmail() +
                 "\",\"login\":\"" + user.getLogin() +
                 "\",\"name\":\"" + user.getName() +
-                "\",\"birthday\":\"" + user.getBirthday() + "\"}";
+                "\",\"birthday\":\"" + user.getBirthday() +
+                "\",\"friends\":" + user.getFriends() + "}";
     }
 
     protected static Stream<Arguments> invalidFields() {
