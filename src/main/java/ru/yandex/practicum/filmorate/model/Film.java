@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import ru.yandex.practicum.filmorate.validator.FilmValid;
 import javax.validation.constraints.*;
@@ -23,5 +24,6 @@ public class Film {
     @Min(value = 1, message = "Продолжительность фильма не может быть отрицательной")
     private final int duration;
 
+    @JsonIgnore
     private Set<Integer> likes = new HashSet<>();
 }

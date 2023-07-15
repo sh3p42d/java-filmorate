@@ -21,6 +21,7 @@ public class FilmController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Film create(@Valid @RequestBody Film film) {
+        log.debug("Добавляем Film: {}", film);
         return filmService.addFilm(film);
     }
 
@@ -46,18 +47,21 @@ public class FilmController {
     @PutMapping
     @ResponseStatus(HttpStatus.OK)
     public Film update(@Valid @RequestBody Film film) {
+        log.debug("Обновляем Film: {}", film);
         return filmService.updateFilm(film);
     }
 
     @PutMapping(value = "/{filmId}/like/{userId}")
     @ResponseStatus(HttpStatus.OK)
     public boolean likeFilm(@PathVariable int filmId, @PathVariable int userId) {
+        log.debug("Добавляем рекомендацию User id={} для Film id={}", userId, filmId);
         return filmService.like(filmId, userId);
     }
 
     @DeleteMapping(value = "/{filmId}/like/{userId}")
     @ResponseStatus(HttpStatus.OK)
     public boolean unlikeFilm(@PathVariable int filmId, @PathVariable int userId) {
+        log.debug("Удаляем рекомендацию User id={} для Film id={}", userId, filmId);
         return filmService.unlike(filmId, userId);
     }
 }

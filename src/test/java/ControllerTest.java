@@ -25,6 +25,7 @@ public abstract class ControllerTest<T> {
     protected String url;
     protected LocalDate date;
     protected T valueForTest;
+    protected T valueForPostTest;
 
     @Autowired
     protected MockMvc mvc;
@@ -36,7 +37,15 @@ public abstract class ControllerTest<T> {
         return null;
     }
 
+    protected T getValueForPostTest() {
+        return null;
+    }
+
     protected void setValueForTestId(int id) {
+
+    }
+
+    protected void setValueForPostTest(int id) {
 
     }
 
@@ -104,11 +113,11 @@ public abstract class ControllerTest<T> {
     void postValid() throws Exception {
         MvcResult result = mvc.perform(MockMvcRequestBuilders
                 .post(url).contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(valueForTest))).andReturn();
+                .content(objectMapper.writeValueAsString(valueForPostTest))).andReturn();
 
         assertEquals(201, result.getResponse().getStatus());
-        setValueForTestId(2);
-        assertEquals(valueForTestToString(valueForTest), result.getResponse().getContentAsString());
+        setValueForPostTest(2);
+        assertEquals(valueForTestToString(valueForPostTest), result.getResponse().getContentAsString());
     }
 
     @SneakyThrows

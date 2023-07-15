@@ -11,6 +11,7 @@ public class UserControllerTest extends ControllerTest<User> {
         url = "/users";
         date = LocalDate.parse("2000-01-10");
         valueForTest = getValidValueForTest();
+        valueForPostTest = getValueForPostTest();
     }
 
     @Override
@@ -19,8 +20,18 @@ public class UserControllerTest extends ControllerTest<User> {
     }
 
     @Override
+    protected User getValueForPostTest() {
+        return new User("test@mail.com", "test", date);
+    }
+
+    @Override
     protected void setValueForTestId(int id) {
         valueForTest.setId(id);
+    }
+
+    @Override
+    protected void setValueForPostTest(int id) {
+        valueForPostTest.setId(id);
     }
 
     @Override
@@ -29,8 +40,7 @@ public class UserControllerTest extends ControllerTest<User> {
                 ",\"email\":\"" + user.getEmail() +
                 "\",\"login\":\"" + user.getLogin() +
                 "\",\"name\":\"" + user.getName() +
-                "\",\"birthday\":\"" + user.getBirthday() +
-                "\",\"friends\":" + user.getFriends() + "}";
+                "\",\"birthday\":\"" + user.getBirthday() + "\"}";
     }
 
     protected static Stream<Arguments> invalidFields() {

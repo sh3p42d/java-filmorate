@@ -1,6 +1,8 @@
 package ru.yandex.practicum.filmorate.storage.user;
 
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.exceptions.AlreadyExistsException;
+import ru.yandex.practicum.filmorate.exceptions.NotPresentException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.HashMap;
@@ -15,6 +17,15 @@ public class ImMemoryUserStorage implements UserStorage {
 
     @Override
     public User addUser(User user) {
+        for (User u : usersMap.values()) {
+            // В проверку включены все private final поля
+            if (user.getEmail().equals(u.getEmail()) &&
+                    user.getLogin().equals(u.getLogin()) &&
+                    user.getBirthday().equals(u.getBirthday())) {
+                throw new AlreadyExistsException("Такой User уже существует. Его id=" + u.getId());
+            }
+        }
+
         user.setId(userNextId);
         if (user.getName().isEmpty()) {
             user.setName(user.getLogin());
@@ -26,6 +37,9 @@ public class ImMemoryUserStorage implements UserStorage {
 
     @Override
     public User getUser(int id) {
+        if (!usersMap.containsKey(id)) {
+            throw new NotPresentException("User с id=" + id + " не найден");
+        }
         return usersMap.get(id);
     }
 
@@ -37,18 +51,16 @@ public class ImMemoryUserStorage implements UserStorage {
     @Override
     public User updateUser(User user) {
         if (usersMap.containsKey(user.getId())) {
-            usersMap.put(user.getId(), user);
+            usersMap.replace(user.getId(), user);
             return user;
+        } else {
+            throw new NotPresentException("User с id=" + user.getId() + " не найден");
         }
-        return null;
     }
 
     @Override
     public boolean removeUser(User user) {
-        if (usersMap.containsKey(user.getId())) {
-            usersMap.remove(user.getId());
-            return true;
-        }
-        return false;
+        usersMap.remove(user.getId());
+        return true;
     }
 }

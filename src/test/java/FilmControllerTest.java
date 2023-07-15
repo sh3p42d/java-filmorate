@@ -11,6 +11,7 @@ public class FilmControllerTest extends ControllerTest<Film> {
         url = "/films";
         date = LocalDate.parse("2222-02-22");
         valueForTest = getValidValueForTest();
+        valueForPostTest = getValueForPostTest();
     }
 
     @Override
@@ -19,8 +20,18 @@ public class FilmControllerTest extends ControllerTest<Film> {
     }
 
     @Override
+    protected Film getValueForPostTest() {
+        return new Film("Genius is Nolan", "Genius create another great movie", date, 180);
+    }
+
+    @Override
     protected void setValueForTestId(int id) {
         valueForTest.setId(id);
+    }
+
+    @Override
+    protected void setValueForPostTest(int id) {
+        valueForPostTest.setId(id);
     }
 
     @Override
@@ -29,8 +40,7 @@ public class FilmControllerTest extends ControllerTest<Film> {
                 ",\"name\":\"" + film.getName() +
                 "\",\"description\":\"" + film.getDescription() +
                 "\",\"releaseDate\":\"" + film.getReleaseDate() +
-                "\",\"duration\":" + film.getDuration() +
-                ",\"likes\":" + film.getLikes() + "}";
+                "\",\"duration\":" + film.getDuration() + "}";
     }
 
     protected static Stream<Arguments> invalidFields() {
