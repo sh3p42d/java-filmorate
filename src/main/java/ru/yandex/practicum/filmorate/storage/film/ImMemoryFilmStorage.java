@@ -59,8 +59,7 @@ public class ImMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public boolean removeFilm(Film film) {
+    public void removeFilm(Film film) {
         filmsMap.remove(film.getId());
-        return true;
     }
 }

@@ -67,7 +67,7 @@ public class UserService {
         return userStorage.updateUser(user);
     }
 
-    public boolean removeUser(User user) {
-        return userStorage.removeUser(user);
+    public void removeUser(User user) {
+        userStorage.removeUser(user);
     }
 }

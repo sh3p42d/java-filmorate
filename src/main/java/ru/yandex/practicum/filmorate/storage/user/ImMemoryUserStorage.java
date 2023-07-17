@@ -59,8 +59,7 @@ public class ImMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public boolean removeUser(User user) {
+    public void removeUser(User user) {
         usersMap.remove(user.getId());
-        return true;
     }
 }

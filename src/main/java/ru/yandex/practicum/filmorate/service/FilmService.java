@@ -54,7 +54,7 @@ public class FilmService {
         return filmStorage.updateFilm(film);
     }
 
-    public boolean removeFilm(Film film) {
-        return filmStorage.removeFilm(film);
+    public void removeFilm(Film film) {
+        filmStorage.removeFilm(film);
     }
 }
