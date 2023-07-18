@@ -1,26 +1,72 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import ru.yandex.practicum.filmorate.model.User;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.service.UserService;
+
+import javax.validation.Valid;
+import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @RestController
 @RequestMapping("/users")
-public class UserController extends RequestController<User> {
+@RequiredArgsConstructor
+public class UserController {
+    private final UserService userService;
 
-    @Override
-    protected boolean checkIsExist(User user) {
-        return mapOfInfo.containsKey(user.getId());
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public User create(@Valid @RequestBody User user) {
+        log.debug("Добавляем User: {}", user);
+        return userService.addUser(user);
     }
 
-    @Override
-    protected int extractId(User user) {
-        return user.getId();
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public Set<User> findAll() {
+        return userService.getAllUsers();
     }
 
-    @Override
-    protected void addId(User user, int id) {
-        user.setId(id);
+    @GetMapping(value = "/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public User findOne(@PathVariable int id) {
+        return userService.getUser(id);
+    }
+
+    @GetMapping(value = "/{id}/friends")
+    @ResponseStatus(HttpStatus.OK)
+    public List<User> findFriends(@Valid @PathVariable int id) {
+        return userService.getFriends(id);
+    }
+
+    @GetMapping(value = "/{id}/friends/common/{otherId}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<User> findCommon(@PathVariable int id, @PathVariable int otherId) {
+        return userService.commonFriends(id, otherId);
+    }
+
+    @PutMapping
+    @ResponseStatus(HttpStatus.OK)
+    public User update(@Valid @RequestBody User user) {
+        log.debug("Обновляем User: {}", user);
+        return userService.updateUser(user);
+    }
+
+    @PutMapping(value = "/{id}/friends/{friendId}")
+    @ResponseStatus(HttpStatus.OK)
+    public boolean addFriend(@Valid @PathVariable int id, @PathVariable int friendId) {
+        log.debug("Добавляем для User id={} друга User id={}", id, friendId);
+        return userService.addFriend(id, friendId);
+    }
+
+    @DeleteMapping(value = "/{id}/friends/{friendId}")
+    @ResponseStatus(HttpStatus.OK)
+    public boolean deleteFriend(@Valid @PathVariable int id, @PathVariable int friendId) {
+        log.debug("Удаляем у User id={} друга User id={}", id, friendId);
+        return userService.removeFriend(id, friendId);
     }
 }
