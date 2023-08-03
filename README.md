@@ -2,7 +2,7 @@
 Template repository for Filmorate project.
 
 Схема связей базы данных:
-[!DB Scheme](filmorate_db_scheme.png)
+![DB Scheme](filmorate_db_scheme.png)
 
 Примеры запросов: 
 1. Получить всех пользователей:
