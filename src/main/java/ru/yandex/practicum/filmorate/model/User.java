@@ -9,7 +9,7 @@ import java.util.Set;
 
 @Data
 public class User {
-    private int id;
+    private Integer id;
 
     @NotBlank(message = "Почта пользователя не может быть пустой")
     @Email(message = "Почта не соответствует формату mail@domain.com")

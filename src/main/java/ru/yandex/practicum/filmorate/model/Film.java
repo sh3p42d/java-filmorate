@@ -6,12 +6,13 @@ import ru.yandex.practicum.filmorate.validator.FilmValid;
 import javax.validation.constraints.*;
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 @FilmValid
 @Data
 public class Film {
-    private int id;
+    private Integer id;
 
     @NotBlank(message = "Название фильма не может быть пустым")
     private final String name;
@@ -26,4 +27,13 @@ public class Film {
 
     @JsonIgnore
     private Set<Integer> likes = new HashSet<>();
+
+    private LinkedHashSet<Genre> genres;
+
+    @NotNull
+    private Mpa mpa;
+
+    public void addGenre(Genre genre) {
+        genres.add(genre);
+    }
 }

@@ -1,34 +1,33 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.NotPresentException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
+
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class FilmService {
     private final FilmStorage filmStorage;
-
-    public FilmService(FilmStorage filmStorage) {
-        this.filmStorage = filmStorage;
-    }
+    private final LikeService likeService;
 
     public boolean like(int filmId, int userId) {
-        return filmStorage.getFilm(filmId).getLikes().add(userId);
+        return likeService.addLike(filmId, userId);
     }
 
     public boolean unlike(int filmId, int userId) {
         Film film = filmStorage.getFilm(filmId);
 
-        // Если убрать эту проверку, то код ответа будет 200, а нужен 404
         if (!film.getLikes().contains(userId)) {
             throw new NotPresentException("Нет User с id=" + userId);
         }
 
-        return film.getLikes().remove(userId);
+        return likeService.deleteLike(filmId, userId);
     }
 
     public List<Film> getRating(Integer count) {
