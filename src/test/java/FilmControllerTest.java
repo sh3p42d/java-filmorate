@@ -16,12 +16,22 @@ public class FilmControllerTest extends ControllerTest<Film> {
 
     @Override
     protected Film getValidValueForTest() {
-        return new Film("Nolan is a genius", "Genius create another great movie", date, 180);
+        return Film.builder()
+                .name("Nolan is a genius")
+                .description("Genius create another great movie")
+                .releaseDate(date)
+                .duration(180)
+                .build();
     }
 
     @Override
     protected Film getValueForPostTest() {
-        return new Film("Genius is Nolan", "Genius create another great movie", date, 180);
+        return Film.builder()
+                .name("Genius is Nolan")
+                .description("Genius create another great movie")
+                .releaseDate(date)
+                .duration(180)
+                .build();
     }
 
     @Override

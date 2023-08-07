@@ -1,73 +1,63 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exceptions.NotPresentException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import javax.validation.Valid;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
-    private final UserStorage userStorage;
-
-    public UserService(UserStorage userStorage) {
-        this.userStorage = userStorage;
-    }
-
-    public boolean addFriend(int userId, int friendId) {
-        userStorage.getUser(userId).getFriends().add(friendId);
-        userStorage.getUser(friendId).getFriends().add(userId);
-        return true;
+    private final UserStorage userDbStorage;
+    private final FriendshipService friendshipService;
+    
+    public void addFriend(int userId, int friendId) {
+        if (userDbStorage.getUser(userId) == null || userDbStorage.getUser(friendId) == null) {
+            throw new NotPresentException("Нет User с id=" + userId + " или его друга с id=" + friendId);
+        }
+        friendshipService.addFriend(userId, friendId);
     }
 
     public List<User> getFriends(int userId) {
-        User user = userStorage.getUser(userId);
-
-        List<Integer> friends = new ArrayList<>(user.getFriends());
-        return userStorage.getAllUsers()
-                .stream()
-                .filter(u -> friends.contains(u.getId()))
-                .sorted(Comparator.comparingInt(User::getId))
-                .collect(Collectors.toList());
+        return friendshipService.getFriends(userId);
     }
 
-    public boolean removeFriend(int userId, int friendId) {
-        userStorage.getUser(userId).getFriends().remove(friendId);
-        userStorage.getUser(friendId).getFriends().remove(userId);
-        return true;
+    public void removeFriend(int userId, int friendId) {
+        friendshipService.deleteFriend(userId, friendId);
     }
 
     public List<User> commonFriends(int userId, int friendId) {
-        User user = userStorage.getUser(userId);
-        User friend = userStorage.getUser(friendId);
-
-        List<Integer> usersFriends = new ArrayList<>(user.getFriends());
-        List<Integer> commonFriends = new ArrayList<>(friend.getFriends());
-
-        return userStorage.getAllUsers().stream()
-                .filter(u -> usersFriends.contains(u.getId()) && commonFriends.contains(u.getId()))
-                .collect(Collectors.toList());
+        return friendshipService.getCommonFriends(userId, friendId);
     }
 
     public User addUser(@Valid User user) {
-        return userStorage.addUser(user);
+        checkName(user);
+        return userDbStorage.addUser(user);
     }
 
     public User getUser(int id) {
-        return userStorage.getUser(id);
+        return userDbStorage.getUser(id);
     }
 
-    public Set<User> getAllUsers() {
-        return userStorage.getAllUsers();
+    public List<User> getAllUsers() {
+        return userDbStorage.getAllUsers();
     }
 
     public User updateUser(User user) {
-        return userStorage.updateUser(user);
+        return userDbStorage.updateUser(user);
     }
 
     public void removeUser(User user) {
-        userStorage.removeUser(user);
+        userDbStorage.removeUser(user);
+    }
+
+    private void checkName(User user) {
+        if (user.getName().isBlank() || user.getName() == null) {
+            user.setName(user.getLogin());
+        }
     }
 }

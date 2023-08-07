@@ -14,7 +14,12 @@ class FilmValidationTest extends ValidationTest<Film> {
 
     @Override
     protected Film getValidValueForTest() {
-        return new Film("Nolan is a genius", "Genius create another great movie", date, 180);
+        return Film.builder()
+                .name("Nolan is a genius")
+                .description("Genius create another great movie")
+                .releaseDate(date)
+                .duration(180)
+                .build();
     }
 
     protected static Stream<Arguments> invalidFields() {

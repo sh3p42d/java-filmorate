@@ -16,12 +16,20 @@ public class UserControllerTest extends ControllerTest<User> {
 
     @Override
     protected User getValidValueForTest() {
-        return new User("some@mail.com", "someLogin", date);
+        return User.builder()
+                .email("some@mail.com")
+                .login("someLogin")
+                .birthday(date)
+                .build();
     }
 
     @Override
     protected User getValueForPostTest() {
-        return new User("test@mail.com", "test", date);
+        return User.builder()
+                .email("test@mail.com")
+                .login("test")
+                .birthday(date)
+                .build();
     }
 
     @Override

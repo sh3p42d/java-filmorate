@@ -14,7 +14,11 @@ class UserValidationTest extends ValidationTest<User> {
 
     @Override
     protected User getValidValueForTest() {
-        return new User("some@mail.com", "someLogin", date);
+        return User.builder()
+                .email("some@mail.com")
+                .login("someLogin")
+                .birthday(date)
+                .build();
     }
 
     protected static Stream<Arguments> invalidFields() {
