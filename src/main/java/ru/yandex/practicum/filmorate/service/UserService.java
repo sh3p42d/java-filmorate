@@ -14,7 +14,7 @@ import java.util.*;
 public class UserService {
     private final UserStorage userDbStorage;
     private final FriendshipService friendshipService;
-    
+
     public void addFriend(int userId, int friendId) {
         if (userDbStorage.getUser(userId) == null || userDbStorage.getUser(friendId) == null) {
             throw new NotPresentException("Нет User с id=" + userId + " или его друга с id=" + friendId);
