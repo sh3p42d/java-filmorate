@@ -19,13 +19,13 @@ public class LikeDbStorage implements LikeStorage {
 
     @Override
     public void unlike(Integer filmId, Integer userId) {
-        String sqlLike = "DELETE FROM LIKES WHERE FILM_ID = ? AND USER_ID = ?";
+        String sqlLike = "DELETE FROM LIKES WHERE film_id = ? AND user_id = ?";
         jdbcTemplate.update(sqlLike, filmId, userId);
     }
 
     @Override
     public void like(Integer filmId, Integer userId) {
-        String sqlLike = "INSERT INTO LIKES (FILM_ID, USER_ID)"
+        String sqlLike = "INSERT INTO LIKES (film_id, user_id)"
                 + " VALUES(?,?)";
         jdbcTemplate.update(sqlLike, filmId, userId);
     }
@@ -33,25 +33,25 @@ public class LikeDbStorage implements LikeStorage {
     @Override
     public List<Film> getPopular(Integer end) {
         String sqlFilms = "SELECT * FROM LIKES " +
-                "RIGHT JOIN FILMS ON LIKES.FILM_ID = FILMS.FILM_ID " +
-                "JOIN MPA ON FILMS.MPA_ID = MPA.MPA_ID " +
-                "GROUP BY FILMS.FILM_ID " +
-                "ORDER BY COUNT(USER_ID) DESC " +
+                "RIGHT JOIN FILMS ON LIKES.film_id = FILMS.film_id " +
+                "JOIN MPA ON FILMS.mpa_id = MPA.mpa_id " +
+                "GROUP BY FILMS.film_id " +
+                "ORDER BY COUNT(user_id) DESC " +
                 "LIMIT ?";
 
-        return jdbcTemplate.query(sqlFilms, this::getFilmId, end);
+        return jdbcTemplate.query(sqlFilms, this::buildFilm, end);
     }
 
-    private Film getFilmId(ResultSet resultSet, int rowNum) throws SQLException {
+    private Film buildFilm(ResultSet resultSet, int rowNum) throws SQLException {
         return Film.builder()
-                .id(resultSet.getInt("FILMS.FILM_ID"))
-                .name(resultSet.getString("FILM_NAME"))
-                .description(resultSet.getString("DESCRIPTION"))
-                .releaseDate(resultSet.getDate("RELEASE_DATE").toLocalDate())
-                .duration(resultSet.getInt("DURATION"))
+                .id(resultSet.getInt("FILMS.film_id"))
+                .name(resultSet.getString("film_name"))
+                .description(resultSet.getString("description"))
+                .releaseDate(resultSet.getDate("release_date").toLocalDate())
+                .duration(resultSet.getInt("duration"))
                 .mpa(Mpa.builder()
-                        .id(resultSet.getInt("MPA_ID"))
-                        .name(resultSet.getString("MPA_NAME")).build())
+                        .id(resultSet.getInt("mpa_id"))
+                        .name(resultSet.getString("mpa_name")).build())
                 .genres(new LinkedHashSet<>())
                 .build();
     }

@@ -17,41 +17,41 @@ public class FriendshipDbStorage implements FriendshipStorage {
 
     @Override
     public void addFriend(int userId, int friendId) {
-        String sqlQuery = "INSERT INTO FRIENDS (USER_ID, FRIEND_ID) VALUES(?,?)";
+        String sqlQuery = "INSERT INTO FRIENDS (user_id, friend_id) VALUES(?,?)";
         jdbcTemplate.update(sqlQuery,userId, friendId);
     }
 
     @Override
     public void deleteFriend(int userId, int friendId) {
-        String sqlQuery = "DELETE FROM FRIENDS WHERE USER_ID = ? AND FRIEND_ID = ?";
+        String sqlQuery = "DELETE FROM FRIENDS WHERE user_id = ? AND friend_id = ?";
         jdbcTemplate.update(sqlQuery, userId, friendId);
     }
 
     @Override
     public List<User> getFriends(Integer id) {
         String sqlQuery = "SELECT * FROM USERS, FRIENDS " +
-                "WHERE USERS.USER_ID = FRIENDS.FRIEND_ID AND FRIENDS.USER_ID = ?";
+                "WHERE USERS.user_id = FRIENDS.friend_id AND FRIENDS.user_id = ?";
 
-        return jdbcTemplate.query(sqlQuery, this::getFriend, id);
+        return jdbcTemplate.query(sqlQuery, this::buildFriendUser, id);
     }
 
     @Override
     public List<User> getCommonFriends(int userId, int friendId) {
         String sqlQuery = " SELECT * FROM USERS " +
-                " WHERE USER_ID in (SELECT FRIEND_ID FROM FRIENDS " +
+                " WHERE user_id in (SELECT friend_id FROM FRIENDS " +
                 " WHERE friend_id in (SELECT friend_id FROM FRIENDS " +
-                " WHERE USER_ID = ?) AND USER_ID = ?)";
+                " WHERE user_id = ?) AND user_id = ?)";
 
-        return jdbcTemplate.query(sqlQuery, this::getFriend, friendId, userId);
+        return jdbcTemplate.query(sqlQuery, this::buildFriendUser, friendId, userId);
     }
 
-    private User getFriend(ResultSet resultSet, int rowNum) throws SQLException {
+    private User buildFriendUser(ResultSet resultSet, int rowNum) throws SQLException {
         return User.builder()
-                .id(resultSet.getInt("USER_ID"))
-                .email(resultSet.getString("EMAIL"))
-                .login(resultSet.getString("LOGIN"))
-                .birthday(resultSet.getDate("BIRTHDAY").toLocalDate())
-                .name(resultSet.getString("USERNAME"))
+                .id(resultSet.getInt("user_id"))
+                .email(resultSet.getString("email"))
+                .login(resultSet.getString("login"))
+                .birthday(resultSet.getDate("birthday").toLocalDate())
+                .name(resultSet.getString("username"))
                 .build();
     }
 }

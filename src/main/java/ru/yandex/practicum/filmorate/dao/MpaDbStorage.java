@@ -19,24 +19,24 @@ public class MpaDbStorage implements MpaStorage {
     @Override
     public List<Mpa> getAllMpa() {
         String sqlQuery = "SELECT * FROM MPA ";
-        return jdbcTemplate.query(sqlQuery,this::findMpa);
+        return jdbcTemplate.query(sqlQuery,this::buildMpa);
     }
 
     @Override
     public Mpa getMpaById(Integer id) {
-        String sqlQuery = "SELECT * FROM MPA WHERE MPA_ID = ?";
+        String sqlQuery = "SELECT * FROM MPA WHERE mpa_id = ?";
 
         try {
-            return jdbcTemplate.queryForObject(sqlQuery, this::findMpa, id);
+            return jdbcTemplate.queryForObject(sqlQuery, this::buildMpa, id);
         } catch (RuntimeException e) {
             throw new NotPresentException("Нет такого MPA с id=" + id);
         }
     }
 
-    private Mpa findMpa(ResultSet resultSet, int i) throws SQLException {
+    private Mpa buildMpa(ResultSet resultSet, int i) throws SQLException {
         return Mpa.builder()
-                .id(resultSet.getInt("MPA_ID"))
-                .name(resultSet.getString("MPA_NAME"))
+                .id(resultSet.getInt("mpa_id"))
+                .name(resultSet.getString("mpa_name"))
                 .build();
     }
 }

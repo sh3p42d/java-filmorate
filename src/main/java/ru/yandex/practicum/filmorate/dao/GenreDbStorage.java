@@ -26,28 +26,28 @@ public class GenreDbStorage implements GenreStorage {
 
     @Override
     public List<Genre> getAllGenres() {
-        String sqlQuery = "SELECT * FROM GENRE ";
-        return jdbcTemplate.query(sqlQuery, this::findGenre);
+        String sqlQuery = "SELECT * FROM GENRES";
+        return jdbcTemplate.query(sqlQuery, this::buildGenre);
     }
 
     @Override
     public Genre getGenre(int id) {
-        String sqlQuery = "SELECT * FROM GENRE WHERE GENRE_ID = ?";
+        String sqlQuery = "SELECT * FROM GENRES WHERE genre_id = ?";
 
         try {
-            return jdbcTemplate.queryForObject(sqlQuery, this::findGenre, id);
+            return jdbcTemplate.queryForObject(sqlQuery, this::buildGenre, id);
         } catch (RuntimeException e) {
             throw new NotPresentException("Нет такого Genre с id=" + id);
         }
     }
 
     public void deleteGenre(int id) {
-        String sqlQuery = "DELETE FROM GENRE_FILM WHERE FILM_ID = ?";
+        String sqlQuery = "DELETE FROM GENRE_FILM WHERE film_id = ?";
         jdbcTemplate.update(sqlQuery, id);
     }
 
     public void addGenre(Film film) {
-        String sqlQuery = "INSERT INTO GENRE_FILM (FILM_ID, GENRE_ID) VALUES(?,?)";
+        String sqlQuery = "INSERT INTO GENRE_FILM (film_id, genre_id) VALUES(?,?)";
 
         List<Integer> genres = film.getGenres()
                 .stream()
@@ -68,10 +68,10 @@ public class GenreDbStorage implements GenreStorage {
         });
     }
 
-    private Genre findGenre(ResultSet resultSet, int rowNum) throws SQLException {
+    private Genre buildGenre(ResultSet resultSet, int rowNum) throws SQLException {
         return Genre.builder()
-                .id(resultSet.getInt("GENRE_ID"))
-                .name(resultSet.getString("GENRE_NAME"))
+                .id(resultSet.getInt("genre_id"))
+                .name(resultSet.getString("genre_name"))
                 .build();
 
     }
@@ -82,12 +82,12 @@ public class GenreDbStorage implements GenreStorage {
 
         String inSql = String.join(",", Collections.nCopies(films.size(), "?"));
 
-        final String sqlQuery = "SELECT * FROM GENRE g, " +
-                "GENRE_FILM gf WHERE gf.GENRE_ID = g.GENRE_ID AND gf.FILM_ID IN (" + inSql + ")";
+        final String sqlQuery = "SELECT * FROM GENRES g, " +
+                "GENRE_FILM gf WHERE gf.genre_id = g.genre_id AND gf.film_id IN (" + inSql + ")";
 
         jdbcTemplate.query(sqlQuery, (rs) -> {
-            final Film film = filmById.get(rs.getInt("FILM_ID"));
-            film.addGenre(findGenre(rs, 0));
+            final Film film = filmById.get(rs.getInt("film_id"));
+            film.addGenre(buildGenre(rs, 0));
         }, films.stream().map(Film::getId).toArray());
     }
 }

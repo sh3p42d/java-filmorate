@@ -28,18 +28,18 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public List<Film> getAllFilms() {
             String sqlQuery = "SELECT * FROM MPA, FILMS " +
-                    "WHERE MPA.MPA_ID = FILMS.MPA_ID ";
-            return jdbcTemplate.query(sqlQuery, this::findFilm);
+                    "WHERE MPA.mpa_id = FILMS.mpa_id ";
+            return jdbcTemplate.query(sqlQuery, this::buildFilm);
     }
 
     @Override
     public Film addFilm(Film film) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
-        String sqlQuery = "INSERT INTO FILMS (FILM_NAME, DESCRIPTION, RELEASE_DATE, DURATION, MPA_ID) " +
+        String sqlQuery = "INSERT INTO FILMS (film_name, description, release_date, duration, mpa_id) " +
                 "VALUES(?,?,?,?,?)";
         jdbcTemplate.update(connection -> {
-            PreparedStatement stmt = connection.prepareStatement(sqlQuery,  new String[]{"FILM_ID"});
+            PreparedStatement stmt = connection.prepareStatement(sqlQuery,  new String[]{"film_id"});
             stmt.setString(1, film.getName());
             stmt.setString(2, film.getDescription());
             stmt.setDate(3, Date.valueOf(film.getReleaseDate()));
@@ -59,8 +59,8 @@ public class FilmDbStorage implements FilmStorage {
         }
 
         String sqlQuery = "UPDATE FILMS " +
-                "SET FILM_NAME = ?, DESCRIPTION = ?, RELEASE_DATE = ?, DURATION = ?, MPA_ID = ? " +
-                "WHERE FILM_ID = ?";
+                "SET film_name = ?, description = ?, release_date = ?, duration = ?, mpa_id = ? " +
+                "WHERE film_id = ?";
 
             jdbcTemplate.update(sqlQuery,
                     film.getName(),
@@ -78,31 +78,31 @@ public class FilmDbStorage implements FilmStorage {
             throw new NotPresentException("Нет такого Film с id=" + film.getId());
         }
 
-        String sqlQuery = "DELETE FROM FILMS WHERE FILM_ID = ?";
+        String sqlQuery = "DELETE FROM FILMS WHERE film_id = ?";
         jdbcTemplate.update(sqlQuery, film.getId());
     }
 
     @Override
     public Film getFilm(int id) {
         String sqlQuery = "SELECT * FROM MPA, FILMS " +
-                "WHERE FILMS.MPA_ID = MPA.MPA_ID AND FILM_ID = ?";
+                "WHERE FILMS.mpa_id = MPA.mpa_id AND film_id = ?";
         try {
-            return jdbcTemplate.query(sqlQuery, this::findFilm, id).iterator().next();
+            return jdbcTemplate.query(sqlQuery, this::buildFilm, id).iterator().next();
         } catch (RuntimeException e) {
             throw new NotPresentException("Нет такого Film с id=" + id);
         }
     }
 
-    private Film findFilm(ResultSet resultSet, int rowNum) throws SQLException {
+    private Film buildFilm(ResultSet resultSet, int rowNum) throws SQLException {
         return Film.builder()
-                .id(resultSet.getInt("FILM_ID"))
-                .name(resultSet.getString("FILM_NAME"))
-                .description(resultSet.getString("DESCRIPTION"))
-                .releaseDate(resultSet.getDate("RELEASE_DATE").toLocalDate())
-                .duration(resultSet.getInt("DURATION"))
+                .id(resultSet.getInt("film_id"))
+                .name(resultSet.getString("film_name"))
+                .description(resultSet.getString("description"))
+                .releaseDate(resultSet.getDate("release_date").toLocalDate())
+                .duration(resultSet.getInt("duration"))
                 .mpa(Mpa.builder()
-                        .id(resultSet.getInt("MPA_ID"))
-                        .name(resultSet.getString("MPA_NAME")).build())
+                        .id(resultSet.getInt("mpa_id"))
+                        .name(resultSet.getString("mpa_name")).build())
                 .genres(new LinkedHashSet<>())
                 .build();
     }

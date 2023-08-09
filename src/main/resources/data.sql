@@ -1,4 +1,4 @@
-merge into genre(GENRE_ID, GENRE_NAME)
+merge into GENRES(GENRE_ID, GENRE_NAME)
 values  (1, 'Комедия'),
         (2, 'Драма'),
         (3, 'Мультфильм'),
