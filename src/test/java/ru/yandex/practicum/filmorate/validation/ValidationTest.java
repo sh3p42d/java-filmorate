@@ -1,3 +1,5 @@
+package ru.yandex.practicum.filmorate.validation;
+
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

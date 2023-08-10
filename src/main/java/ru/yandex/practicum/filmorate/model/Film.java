@@ -1,15 +1,15 @@
 package ru.yandex.practicum.filmorate.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Builder;
 import lombok.Data;
 import ru.yandex.practicum.filmorate.validator.FilmValid;
 import javax.validation.constraints.*;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.LinkedHashSet;
 
 @FilmValid
 @Data
+@Builder
 public class Film {
     private int id;
 
@@ -24,6 +24,12 @@ public class Film {
     @Min(value = 1, message = "Продолжительность фильма не может быть отрицательной")
     private final int duration;
 
-    @JsonIgnore
-    private Set<Integer> likes = new HashSet<>();
+    private LinkedHashSet<Genre> genres;
+
+    @NotNull
+    private Mpa mpa;
+
+    public void addGenre(Genre genre) {
+        genres.add(genre);
+    }
 }

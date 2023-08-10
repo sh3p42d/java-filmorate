@@ -1,8 +1,12 @@
+package ru.yandex.practicum.filmorate.controller;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.provider.Arguments;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Mpa;
 
 import java.time.LocalDate;
+import java.util.LinkedHashSet;
 import java.util.stream.Stream;
 
 public class FilmControllerTest extends ControllerTest<Film> {
@@ -16,12 +20,32 @@ public class FilmControllerTest extends ControllerTest<Film> {
 
     @Override
     protected Film getValidValueForTest() {
-        return new Film("Nolan is a genius", "Genius create another great movie", date, 180);
+        return Film.builder()
+                .id(1)
+                .name("film_name")
+                .description("description")
+                .releaseDate(date)
+                .duration(120)
+                .mpa(Mpa.builder()
+                        .id(1)
+                        .name(("G")).build())
+                .genres(new LinkedHashSet<>())
+                .build();
     }
 
     @Override
     protected Film getValueForPostTest() {
-        return new Film("Genius is Nolan", "Genius create another great movie", date, 180);
+        return Film.builder()
+                .id(4)
+                .name("test_name")
+                .description("test_description")
+                .releaseDate(date)
+                .duration(120)
+                .mpa(Mpa.builder()
+                        .id(2)
+                        .name(("PG")).build())
+                .genres(new LinkedHashSet<>())
+                .build();
     }
 
     @Override
@@ -40,7 +64,12 @@ public class FilmControllerTest extends ControllerTest<Film> {
                 ",\"name\":\"" + film.getName() +
                 "\",\"description\":\"" + film.getDescription() +
                 "\",\"releaseDate\":\"" + film.getReleaseDate() +
-                "\",\"duration\":" + film.getDuration() + "}";
+                "\",\"duration\":" + film.getDuration() +
+                ",\"genres\":" + film.getGenres() +
+                ",\"mpa\":" + "{" +
+                    "\"id\":" + film.getMpa().getId() +
+                    ",\"name\":\"" + film.getMpa().getName() + "\"" + "}" +
+                "}";
     }
 
     protected static Stream<Arguments> invalidFields() {

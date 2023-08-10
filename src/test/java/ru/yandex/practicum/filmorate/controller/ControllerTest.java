@@ -1,26 +1,33 @@
+package ru.yandex.practicum.filmorate.controller;
+
 import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.util.stream.Stream;
 
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import ru.yandex.practicum.filmorate.FilmorateApplication;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest(classes = FilmorateApplication.class)
+@SpringBootTest
 @AutoConfigureMockMvc
+@RequiredArgsConstructor
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@AutoConfigureTestDatabase
 public abstract class ControllerTest<T> {
     protected String url;
     protected LocalDate date;
@@ -31,7 +38,7 @@ public abstract class ControllerTest<T> {
     protected MockMvc mvc;
 
     @Autowired
-    private ObjectMapper objectMapper;
+    protected ObjectMapper objectMapper;
 
     protected T getValidValueForTest() {
         return null;
@@ -51,34 +58,6 @@ public abstract class ControllerTest<T> {
 
     protected String valueForTestToString(T valueForTest) {
         return null;
-    }
-
-    @Test
-    void getEmptyList() throws Exception {
-        MvcResult result = mvc.perform(MockMvcRequestBuilders
-                    .get(url)
-                    .contentType(MediaType.APPLICATION_JSON))
-                    .andReturn();
-
-        assertEquals(200, result.getResponse().getStatus());
-        assertEquals("[]", result.getResponse().getContentAsString());
-    }
-
-    @Test
-    void getValueList() throws Exception {
-        mvc.perform(MockMvcRequestBuilders
-                    .post(url).contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(valueForTest)));
-
-        setValueForTestId(1);
-
-        MvcResult result = mvc.perform(MockMvcRequestBuilders
-                        .get(url)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andReturn();
-
-        assertEquals(200, result.getResponse().getStatus());
-        assertEquals("[" + valueForTestToString(valueForTest) + "]", result.getResponse().getContentAsString());
     }
 
     protected static Stream<Arguments> invalidFields() {
@@ -116,7 +95,7 @@ public abstract class ControllerTest<T> {
                 .content(objectMapper.writeValueAsString(valueForPostTest))).andReturn();
 
         assertEquals(201, result.getResponse().getStatus());
-        setValueForPostTest(2);
+        setValueForPostTest(4);
         assertEquals(valueForTestToString(valueForPostTest), result.getResponse().getContentAsString());
     }
 

@@ -1,57 +1,70 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.NotPresentException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class FilmService {
     private final FilmStorage filmStorage;
+    private final LikeService likeService;
+    private final GenreService genreService;
 
-    public FilmService(FilmStorage filmStorage) {
-        this.filmStorage = filmStorage;
-    }
-
-    public boolean like(int filmId, int userId) {
-        return filmStorage.getFilm(filmId).getLikes().add(userId);
-    }
-
-    public boolean unlike(int filmId, int userId) {
-        Film film = filmStorage.getFilm(filmId);
-
-        // Если убрать эту проверку, то код ответа будет 200, а нужен 404
-        if (!film.getLikes().contains(userId)) {
-            throw new NotPresentException("Нет User с id=" + userId);
+    public void like(int filmId, int userId) {
+        if (userId <= 0) {
+            throw new NotPresentException("Нет такого User с id=" + userId);
         }
-
-        return film.getLikes().remove(userId);
+        likeService.like(filmId, userId);
     }
 
-    public List<Film> getRating(Integer count) {
-        return filmStorage.getAllFilms().stream()
-                .sorted(Collections.reverseOrder(Comparator.comparingInt(film -> film.getLikes().size())))
-                .limit(count)
-                .collect(Collectors.toList());
+    public void unlike(int filmId, int userId) {
+        if (userId <= 0) {
+            throw new NotPresentException("Нет такого User с id=" + userId);
+        }
+        likeService.unlike(filmId, userId);
+    }
+
+    public List<Film> getPopular(Integer count) {
+        List<Film> filmList = likeService.getPopular(count);
+        genreService.load(filmList);
+        return filmList;
     }
 
     public Film addFilm(Film film) {
-        return filmStorage.addFilm(film);
+        filmStorage.addFilm(film);
+        if (film.getGenres() != null) {
+            genreService.addGenre(film);
+        }
+
+        return film;
     }
 
     public Film getFilm(int id) {
-        return filmStorage.getFilm(id);
+        Film film = filmStorage.getFilm(id);
+        genreService.load(List.of(film));
+        return film;
     }
 
-    public Set<Film> getAllFilms() {
-        return filmStorage.getAllFilms();
+    public List<Film> getAllFilms() {
+        List<Film> filmList = filmStorage.getAllFilms();
+        genreService.load(filmList);
+        return filmList;
     }
 
     public Film updateFilm(Film film) {
-        return filmStorage.updateFilm(film);
+        if (film.getGenres() != null) {
+            genreService.deleteGenre(film.getId());
+        }
+        filmStorage.updateFilm(film);
+        if (film.getGenres() != null) {
+            genreService.addGenre(film);
+        }
+        return film;
     }
 
     public void removeFilm(Film film) {

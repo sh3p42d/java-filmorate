@@ -9,7 +9,6 @@ import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Set;
 
 @Slf4j
 @RestController
@@ -27,7 +26,7 @@ public class FilmController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public Set<Film> findAll() {
+    public List<Film> findAll() {
         return filmService.getAllFilms();
     }
 
@@ -41,7 +40,7 @@ public class FilmController {
     @ResponseStatus(HttpStatus.OK)
     public List<Film> findPopular(@RequestParam(value = "count", defaultValue = "10", required = false)
                                      Integer count) {
-        return filmService.getRating(count);
+        return filmService.getPopular(count);
     }
 
     @PutMapping
@@ -53,15 +52,15 @@ public class FilmController {
 
     @PutMapping(value = "/{filmId}/like/{userId}")
     @ResponseStatus(HttpStatus.OK)
-    public boolean likeFilm(@PathVariable int filmId, @PathVariable int userId) {
+    public void likeFilm(@PathVariable int filmId, @PathVariable int userId) {
         log.debug("Добавляем рекомендацию User id={} для Film id={}", userId, filmId);
-        return filmService.like(filmId, userId);
+        filmService.like(filmId, userId);
     }
 
     @DeleteMapping(value = "/{filmId}/like/{userId}")
     @ResponseStatus(HttpStatus.OK)
-    public boolean unlikeFilm(@PathVariable int filmId, @PathVariable int userId) {
+    public void unlikeFilm(@PathVariable int filmId, @PathVariable int userId) {
         log.debug("Удаляем рекомендацию User id={} для Film id={}", userId, filmId);
-        return filmService.unlike(filmId, userId);
+        filmService.unlike(filmId, userId);
     }
 }

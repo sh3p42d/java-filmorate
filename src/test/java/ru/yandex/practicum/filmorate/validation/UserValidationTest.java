@@ -1,3 +1,5 @@
+package ru.yandex.practicum.filmorate.validation;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.provider.Arguments;
 import ru.yandex.practicum.filmorate.model.User;
@@ -14,7 +16,13 @@ class UserValidationTest extends ValidationTest<User> {
 
     @Override
     protected User getValidValueForTest() {
-        return new User("some@mail.com", "someLogin", date);
+        return User.builder()
+                .id(1)
+                .email("email@mail.com")
+                .login("login123")
+                .birthday(date)
+                .name("Kama Pulya")
+                .build();
     }
 
     protected static Stream<Arguments> invalidFields() {

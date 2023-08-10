@@ -1,3 +1,5 @@
+package ru.yandex.practicum.filmorate.controller;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.provider.Arguments;
 import ru.yandex.practicum.filmorate.model.User;
@@ -16,12 +18,24 @@ public class UserControllerTest extends ControllerTest<User> {
 
     @Override
     protected User getValidValueForTest() {
-        return new User("some@mail.com", "someLogin", date);
+        return User.builder()
+                .id(1)
+                .email("email@mail.com")
+                .login("login123")
+                .birthday(date)
+                .name("Kama Pulya")
+                .build();
     }
 
     @Override
     protected User getValueForPostTest() {
-        return new User("test@mail.com", "test", date);
+        return User.builder()
+                .id(4)
+                .email("test@mail.com")
+                .login("test_login")
+                .birthday(date)
+                .name("test_name")
+                .build();
     }
 
     @Override
