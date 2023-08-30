@@ -23,6 +23,9 @@ public class UserService {
     }
 
     public List<User> getFriends(int userId) {
+        if (userDbStorage.getUser(userId) == null) {
+            throw new NotPresentException("Нет User с id=" + userId);
+        }
         return friendshipService.getFriends(userId);
     }
 

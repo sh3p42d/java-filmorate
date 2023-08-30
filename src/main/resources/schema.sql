@@ -17,9 +17,9 @@ CREATE TABLE IF NOT EXISTS FRIENDS
     constraint friends_pk
         PRIMARY KEY (friendship_id),
     constraint friends_users_friendship_id_fk
-        foreign key (user_id) references USERS,
+        foreign key (user_id) references USERS ON DELETE CASCADE ,
     constraint friends_friend_id_friendship_id_fk
-        foreign key (friend_id) references USERS
+        foreign key (friend_id) references USERS ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS MPA
@@ -56,9 +56,9 @@ CREATE TABLE IF NOT EXISTS GENRE_FILM
     constraint genre_film_pk
         PRIMARY KEY (genre_film_id),
     constraint genre_film_films_film_id_fk
-        foreign key (film_id) references FILMS(film_id),
+        foreign key (film_id) references FILMS(film_id) ON DELETE CASCADE,
     constraint genre_genre_film_genre_id_fk
-        foreign key (genre_id) references GENRES(genre_id)
+        foreign key (genre_id) references GENRES(genre_id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS LIKES
@@ -68,9 +68,9 @@ CREATE TABLE IF NOT EXISTS LIKES
     constraint likes_pk
         PRIMARY KEY (user_id, film_id),
     constraint likes_films_film_id_fk
-        foreign key (film_id) references FILMS(film_id),
+        foreign key (film_id) references FILMS(film_id) ON DELETE CASCADE ,
     constraint likes_users_user_id_fk
-        foreign key (user_id) references USERS
+        foreign key (user_id) references USERS ON DELETE CASCADE
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS user_email_uindex on USERS (email);
