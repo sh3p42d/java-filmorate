@@ -63,4 +63,10 @@ public class FilmController {
         log.debug("Удаляем рекомендацию User id={} для Film id={}", userId, filmId);
         filmService.unlike(filmId, userId);
     }
+
+    @DeleteMapping(value = "/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteFilm(@PathVariable int id) {
+        filmService.removeFilm(filmService.getFilm(id));
+    }
 }

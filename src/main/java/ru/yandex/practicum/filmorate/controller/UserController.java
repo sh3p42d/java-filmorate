@@ -68,4 +68,10 @@ public class UserController {
         log.debug("Удаляем у User id={} друга User id={}", id, friendId);
         userService.removeFriend(id, friendId);
     }
+
+    @DeleteMapping(value = "/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteUser(@PathVariable int id) {
+        userService.removeUser(userService.getUser(id));
+    }
 }
